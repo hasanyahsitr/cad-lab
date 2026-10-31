@@ -86,3 +86,31 @@ def test_reject_wrong_content_and_oversized_project(local_server):
         == 413
     )
     assert request(local_server, "POST", "/api/admin", "{}")[0] == 404
+
+
+def test_drawing_export_endpoint_is_separate_from_plate_schema(local_server):
+    drawing = {
+        "format": "cad-lab.drawing",
+        "schema_version": 1,
+        "units": "mm",
+        "name": "Drawing",
+        "layers": [{"id": "0", "name": "0", "color": "#abcdef", "visible": True, "locked": False}],
+        "entities": [{"id": "a", "layer": "0", "type": "circle", "center": [20, 20], "radius": 5}],
+    }
+    status, headers, body = request(
+        local_server,
+        "POST",
+        "/api/drawing/dxf",
+        json.dumps(drawing),
+        {"Content-Type": "application/json"},
+    )
+    assert status == 200
+    assert headers["Content-Type"] == "application/dxf"
+    assert b"CIRCLE" in body
+    assert b"AC1024" in body
+
+
+def test_default_page_prefers_drafting_without_exposing_source_tree(local_server):
+    (local_server.web_root / "drafting.html").write_text("<h1>Drafting</h1>", encoding="utf-8")
+    assert request(local_server, "GET", "/")[2] == b"<h1>Drafting</h1>"
+    assert request(local_server, "GET", "/index.html")[2] == b"<h1>CAD</h1>"

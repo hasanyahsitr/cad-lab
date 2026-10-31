@@ -2,6 +2,24 @@
 
 Progress is recorded as implemented work is verified. This is not a release-date promise.
 
+## Current direction — AutoCAD-class drafting
+
+The owner clarified that the plate experiment must not define the product.
+The default page is now a drawing-first application; the 3D experiment remains at `/index.html`.
+
+- [x] Exact 2D line, polyline, rectangle and circle entities, independent of the UI.
+- [x] Command/prompt engine, Cartesian/relative/polar coordinates, local vertex undo and close options.
+- [x] Pick/Shift selection, MOVE/COPY/ERASE, layer visibility/locking/color.
+- [x] Grid, orthogonal input and endpoint/midpoint/center/quadrant snapping.
+- [x] Bounded drawing history, editable JSON save/open and actual DXF export.
+- [x] Independent Gemini 4 Argon High review, with incorporated tests and findings.
+- [ ] DXF import, independent CAD interchange verification and a shared generated schema.
+- [ ] Window/crossing selection, intersections, spatial indexing and delta history.
+- [ ] ARC/SPLINE, OFFSET/TRIM/EXTEND/FILLET, blocks, dimensions, layouts and plotting.
+- [ ] DWG interoperability, general 3D modeling and a packaged desktop application.
+
+The original milestones below describe the earlier reusable geometry experiment.
+
 ## Milestone 0 — independent foundation
 
 - [x] Separate repository, original-code license, and upstream attribution.

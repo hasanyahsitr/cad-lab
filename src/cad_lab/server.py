@@ -9,6 +9,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
+from cad_lab.drawing import MAX_DRAWING_BYTES, drawing_to_dxf
 from cad_lab.geometry import build_plate, export_part, mesh_data
 from cad_lab.project import MAX_PROJECT_BYTES, Project, ProjectError
 
@@ -82,7 +83,12 @@ class CADHandler(BaseHTTPRequestHandler):
             self._json(404, {"error": "Unknown endpoint."})
             return
         try:
-            relative = unquote(route).lstrip("/") or "index.html"
+            default_page = (
+                "drafting.html"
+                if (self.server.web_root / "drafting.html").is_file()
+                else "index.html"
+            )
+            relative = unquote(route).lstrip("/") or default_page
             path = (self.server.web_root / relative).resolve()
             if not path.is_relative_to(self.server.web_root) or not path.is_file():
                 self._json(404, {"error": "Not found. Build the web application first."})
@@ -98,6 +104,7 @@ class CADHandler(BaseHTTPRequestHandler):
         if not self._local_request():
             return
         route = urlsplit(self.path).path
+        body_limit = MAX_DRAWING_BYTES if route == "/api/drawing/dxf" else MAX_PROJECT_BYTES
         try:
             size = int(self.headers.get("Content-Length", "0"))
         except ValueError:
@@ -110,15 +117,25 @@ class CADHandler(BaseHTTPRequestHandler):
             self.connection.settimeout(10)
             # Consume bounded bodies before rejecting them; closing a socket with unread
             # data can discard the error response on Windows. Never read an unbounded body.
-            raw = self.rfile.read(min(size, MAX_PROJECT_BYTES + 1))
-            if size > MAX_PROJECT_BYTES:
-                self._json(413, {"error": "Send a project no larger than 64 KiB."})
+            raw = self.rfile.read(min(size, body_limit + 1))
+            if size > body_limit:
+                self._json(413, {"error": "Request exceeds the endpoint size limit."})
                 return
-            if route not in {"/api/model", "/api/export/step", "/api/export/stl"}:
+            if route not in {
+                "/api/model",
+                "/api/export/step",
+                "/api/export/stl",
+                "/api/drawing/dxf",
+            }:
                 self._json(404, {"error": "Unknown endpoint."})
                 return
             if self.headers.get("Content-Type", "").split(";")[0].strip() != "application/json":
                 self._json(415, {"error": "Send an application/json project."})
+                return
+            if route == "/api/drawing/dxf":
+                self._send(
+                    200, drawing_to_dxf(raw.decode("utf-8")), "application/dxf", "drawing.dxf"
+                )
                 return
             project = Project.from_json(raw.decode("utf-8"))
             # Serve browser assets concurrently while serializing all OCCT operations.

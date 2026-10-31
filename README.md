@@ -2,13 +2,36 @@
 
 An independent, open-source CAD project started by Hasan Yahşi. **CAD Lab is a working name.**
 
-Long-term direction: approachable, precise, local-first CAD with editable models,
-assemblies, technical drawings, and interoperable files, including commercial use
-without a mandatory subscription.
+Long-term direction: a comprehensive, independent AutoCAD-class drawing application,
+with precise local editing, technical drawings, interoperable files, and integrated
+3D modeling, including commercial use without a mandatory subscription.
 
-This repository starts with a deliberately small engineering milestone: a
-dimension-driven plate with four through-holes, project save/reopen, and STEP export.
-It is not yet a general-purpose sketcher or an AutoCAD/Fusion replacement.
+Implemented now: a drawing-first 2D workbench with command input, editable entities,
+selection, layers, snapping, undo/redo and DXF export. The original dimension-driven
+3D plate is retained as a separate engineering experiment. This is an early CAD core,
+not a complete AutoCAD replacement.
+
+## 2D drafting workbench
+
+The default page at **http://127.0.0.1:4310/** opens the drawing application. Supported
+commands: `LINE` (`L`), `PLINE` (`PL`), `RECTANG` (`REC`), `CIRCLE` (`C`), `MOVE` (`M`),
+`COPY` (`CO`), `ERASE` (`E`), `DIST` (`DI`), `UNDO` (`U`), `REDO`, `LAYER` and zoom extents.
+
+Try `REC 0,0 100,60`, then `C 20,20 5`. Click an entity and enter `M 0,0 10,0`.
+Coordinates use `.` for decimals and `,` between X/Y. Relative coordinates use
+`@20,0`; polar coordinates use `@50<90`. LINE/PLINE continue until Enter/Esc, `C`
+closes them, and command-local `U` removes the last pending point. CIRCLE accepts
+`D` for diameter. Shift-click toggles multi-selection; middle-drag pans; the wheel zooms.
+
+Layer visibility, locking and color, grid display/snap, orthographic input and
+endpoint/midpoint/center/quadrant snapping are implemented. Save/reopen editable JSON
+drawings and export LINE/LWPOLYLINE/CIRCLE entities to actual DXF, including layer
+colors/visibility/locking and millimeter units. DXF import and DWG support are not implemented.
+
+The 3D plate experiment is at **http://127.0.0.1:4310/index.html**.
+
+The owner requested independent review through Google Antigravity/Gemini 4 Argon High.
+See the [incorporated review findings](docs/REVIEW-RESULTS.md) and [product direction](docs/AUTOCAD-DIRECTION.md).
 
 ## Run the geometry milestone
 
@@ -42,7 +65,7 @@ Open **http://127.0.0.1:4310**. The first UI is in Turkish. The server binds onl
 to loopback and serves the built frontend, never the source tree or your disk.
 It is a local development tool, not an internet-facing multi-user service.
 
-Implemented: real CAD-derived 3D viewport, editable plate dimensions, bounded
+The separate 3D experiment implements a real CAD-derived viewport, editable plate dimensions, bounded
 undo/redo history, project download/reopen, STEP/STL download, and preservation of
 the last valid model after invalid input. Unsaved edits disable downloads until
 applied or reverted, so exported files match the displayed model.
@@ -59,10 +82,12 @@ npm --prefix web test
 .\.venv\Scripts\python.exe -m ruff format --check .
 ```
 
-Known limits: only the four-hole plate is implemented; no interactive sketch solver,
-arbitrary feature tree, assemblies, technical drawing, DWG support, or packaged desktop
-installer. STEP round trips use the same upstream kernel; an independent CAD-program
-validation and real-user workflow comparison are still required.
+Known limits: no interactive constraint solver, arbitrary 3D feature tree, assemblies,
+dimensions/layouts/plotting, DWG, DXF import, or packaged desktop installer. The 2D
+workbench implements a limited entity and command subset. STEP/DXF round trips use
+their respective upstream libraries; independent CAD-program validation and real-user
+workflow comparisons remain required. Snapshot history and SVG rendering are initial
+choices, not a claim of production-scale drawing performance.
 
 ## Development in public
 

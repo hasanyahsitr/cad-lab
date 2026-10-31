@@ -7,9 +7,10 @@ Uzun vadeli hedef: ölçülü eskizler, düzenlenebilir katı modeller, montajla
 teknik çizimler ve güvenilir dosya alışverişi sunan, çevrimdışı kullanılabilen CAD.
 Ticari kullanım için zorunlu abonelik hedeflenmiyor.
 
-İlk mühendislik adımı: dört delikli bir plaka oluşturmak, ölçülerini değiştirmek,
-projeyi kaydedip yeniden açmak ve STEP dışa aktarmak. Genel amaçlı eskiz,
-montaj veya AutoCAD/Fusion eşdeğerliği henüz tamamlanmış özellikler değildir.
+Ana uygulama artık AutoCAD tarzı 2B çizim çalışma alanıdır: komut satırı, çizim
+nesneleri, katmanlar, nesne seçimi/yakalama, geri al/yinele ve DXF dışa aktarma.
+Dört delikli plaka önceki geometri denemesi olarak ayrı tutulur. Tam AutoCAD
+eşdeğerliği, montaj ve genel amaçlı kısıt çözücü tamamlanmış özellikler değildir.
 
 Gelişmeler küçük commit'ler, tekrar üretilebilir örnekler ve doğrulama sonuçlarıyla
 GitHub'da izlenir. Kişisel web sitesi ve bağlantı sayfalarından ayrı bir projedir.
@@ -36,9 +37,20 @@ Görünümde ok tuşları döndürür, `+`/`-` yakınlaştırır, `F` modeli sı
 Hesap veya bulut geometri servisi gerekmez. Bağımlılıklar kurulduktan sonra model
 işlemleri yerelde çalışır. Sunucu yalnız bu bilgisayardan erişilecek şekilde açılır.
 
-İlk sürümde dört delikli plaka, ölçü değişiklikleri, geri al/yinele, proje aç/kaydet
-ve STEP/STL indirme çalışır. Genel amaçlı eskiz, montaj, DWG ve kurulum paketi henüz yok.
-Farklı bir CAD programında dosya doğrulaması ve gerçek kullanıcı karşılaştırması bekliyor.
+Ana sayfada `REC 0,0 100,60` ve `C 20,20 5` komutlarını deneyin. Bir nesneyi seçip
+`M 0,0 10,0` yazarak taşıyın. `LINE`, `PLINE`, `CIRCLE`, `RECTANG`, `MOVE`, `COPY`,
+`ERASE`, `DIST`, `UNDO`, `REDO` çalışır. LINE/PLINE Enter ile tamamlanır; `C` kapatır,
+komut içindeki `U` son noktayı geri alır. Çemberde `D` çap seçeneğidir.
+Ondalık ayıracı nokta, koordinat ayıracı virgüldür; göreli giriş `@20,0`, kutupsal
+giriş `@50<90` biçimindedir. Shift ile çoklu seçim, orta fare tuşuyla kaydırma yapılır.
+
+2B çizim JSON olarak kaydedilip yeniden açılır; desteklenen çizgi, çoklu çizgi ve
+çemberler DXF'e aktarılır. DXF içe aktarma, DWG, ölçülendirme/pafta, montaj ve kurulum
+paketi henüz yok. 3B denemesi `/index.html` adresindedir; STEP/STL çıktısı buradan alınır.
+Farklı bir CAD programında doğrulama ve gerçek kullanıcı karşılaştırması bekliyor.
+
+Google Antigravity'deki Gemini 4 Argon High incelemesinin uygulanmış sonuçları:
+[ortak inceleme notları](docs/REVIEW-RESULTS.md).
 
 - [Yol haritası](docs/ROADMAP.md)
 - [Teknik kararlar](docs/DECISIONS.md)
