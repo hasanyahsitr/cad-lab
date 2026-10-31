@@ -2,6 +2,28 @@
 
 Progress is recorded as implemented work is verified. This is not a release-date promise.
 
+## Current direction — AutoCAD-class drafting
+
+The owner clarified that the plate experiment must not define the product.
+The default page is now a drawing-first application; the 3D experiment remains at `/index.html`.
+
+- [x] Exact 2D line, polyline, rectangle and circle entities, independent of the UI.
+- [x] Command/prompt engine, Cartesian/relative/polar coordinates, local vertex undo and close options.
+- [x] Pick/Shift selection, MOVE/COPY/ERASE, layer visibility/locking/color.
+- [x] Grid, orthogonal input and endpoint/midpoint/center/quadrant snapping.
+- [x] Bounded drawing history, editable JSON save/open and actual DXF export.
+- [x] Independent Gemini 4 Argon High review, with incorporated tests and findings.
+- [x] Supported planar/mm ASCII DXF import, explicit rejection of unsupported geometry and an import report.
+- [x] Analytical window/crossing selection, including hollow-circle and closing-edge tests.
+- [x] Original layered office-layout example, exact MOVE/undo check and DXF round trip.
+- [x] Adaptive grid for small-part and building-scale drawings; 320/390/1280 px layout checks.
+- [ ] Independent CAD interchange verification and a shared generated schema.
+- [ ] Additional intersection snaps, spatial indexing and delta history.
+- [ ] ARC/SPLINE, OFFSET/TRIM/EXTEND/FILLET, blocks, dimensions, layouts and plotting.
+- [ ] DWG interoperability, general 3D modeling and a packaged desktop application.
+
+The original milestones below describe the earlier reusable geometry experiment.
+
 ## Milestone 0 — independent foundation
 
 - [x] Separate repository, original-code license, and upstream attribution.
@@ -10,20 +32,25 @@ Progress is recorded as implemented work is verified. This is not a release-date
 
 ## Milestone 1 — exact geometry and round-trip files
 
-- [ ] Validated plate parameters in millimeters.
-- [ ] Four through-holes with edge-relative positions after dimensional changes.
-- [ ] Exact solid geometry and analytical volume checks.
-- [ ] Versioned project save/load, without executing project-provided code.
-- [ ] STEP and STL export; STEP reimport checks.
-- [ ] Automated tests and CI.
+- [x] Validated plate parameters in millimeters.
+- [x] Four through-holes with edge-relative positions after dimensional changes.
+- [x] Exact solid geometry and analytical volume checks.
+- [x] Versioned project save/load, without executing project-provided code.
+- [x] STEP and STL export; STEP reimport checks.
+- [x] Automated geometry, project, drawing-interchange and local HTTP tests (56 passing locally).
+- [x] GitHub CI execution on Windows and Linux, plus frontend tests/build.
 
 ## Milestone 2 — local interactive experiment
 
-- [ ] Real 3D visualization generated from the CAD model.
-- [ ] Editable dimensions and clear errors while preserving the last valid model.
-- [ ] Project download/reopen and model exports.
-- [ ] Usable keyboard controls, labels, and narrow-screen layout.
-- [ ] Local operation without accounts, analytics, or cloud geometry processing.
+- [x] Real 3D visualization generated from the CAD model.
+- [x] Editable dimensions and clear errors while preserving the last valid model.
+- [x] Project download/reopen and model exports.
+- [x] Keyboard controls, labels, and a narrow-screen layout (390 px checked).
+- [x] Local operation without accounts, analytics, or cloud geometry processing.
+
+Initial UI checks: 80 → 100 mm rebuild, invalid-width rejection with the previous
+model retained, undo/redo, STEP download, project save/reopen, and no horizontal
+overflow at a 390 px browser viewport. Two automated history tests also pass.
 
 ## Later — full CAD application
 

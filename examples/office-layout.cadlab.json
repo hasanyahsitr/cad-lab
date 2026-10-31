@@ -1,0 +1,585 @@
+{
+  "format": "cad-lab.drawing",
+  "schema_version": 1,
+  "units": "mm",
+  "name": "Ofis yerlesimi - ornek",
+  "layers": [
+    {
+      "id": "0",
+      "name": "0",
+      "color": "#d5dee7",
+      "visible": true,
+      "locked": false
+    },
+    {
+      "id": "furniture",
+      "name": "Mobilya",
+      "color": "#d3b689",
+      "visible": true,
+      "locked": false
+    },
+    {
+      "id": "axes",
+      "name": "Aks",
+      "color": "#527d96",
+      "visible": true,
+      "locked": true
+    }
+  ],
+  "entities": [
+    {
+      "id": "entity-1",
+      "layer": "0",
+      "type": "polyline",
+      "points": [
+        [
+          4100,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          0,
+          7000
+        ],
+        [
+          10000,
+          7000
+        ],
+        [
+          10000,
+          0
+        ],
+        [
+          5900,
+          0
+        ]
+      ],
+      "closed": false
+    },
+    {
+      "id": "entity-2",
+      "layer": "0",
+      "type": "polyline",
+      "points": [
+        [
+          4100,
+          150
+        ],
+        [
+          150,
+          150
+        ],
+        [
+          150,
+          6850
+        ],
+        [
+          9850,
+          6850
+        ],
+        [
+          9850,
+          150
+        ],
+        [
+          5900,
+          150
+        ]
+      ],
+      "closed": false
+    },
+    {
+      "id": "entity-3",
+      "layer": "0",
+      "type": "polyline",
+      "points": [
+        [
+          150,
+          3000
+        ],
+        [
+          2000,
+          3000
+        ],
+        [
+          2000,
+          3150
+        ],
+        [
+          150,
+          3150
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "entity-4",
+      "layer": "0",
+      "type": "polyline",
+      "points": [
+        [
+          2900,
+          3000
+        ],
+        [
+          7100,
+          3000
+        ],
+        [
+          7100,
+          3150
+        ],
+        [
+          2900,
+          3150
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "entity-5",
+      "layer": "0",
+      "type": "polyline",
+      "points": [
+        [
+          8000,
+          3000
+        ],
+        [
+          9850,
+          3000
+        ],
+        [
+          9850,
+          3150
+        ],
+        [
+          8000,
+          3150
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "entity-6",
+      "layer": "0",
+      "type": "polyline",
+      "points": [
+        [
+          4925,
+          3150
+        ],
+        [
+          5075,
+          3150
+        ],
+        [
+          5075,
+          6850
+        ],
+        [
+          4925,
+          6850
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "entity-7",
+      "layer": "0",
+      "type": "line",
+      "points": [
+        [
+          2000,
+          3150
+        ],
+        [
+          2000,
+          4050
+        ]
+      ]
+    },
+    {
+      "id": "entity-8",
+      "layer": "0",
+      "type": "line",
+      "points": [
+        [
+          7100,
+          3150
+        ],
+        [
+          7100,
+          4050
+        ]
+      ]
+    },
+    {
+      "id": "entity-9",
+      "layer": "0",
+      "type": "line",
+      "points": [
+        [
+          4100,
+          150
+        ],
+        [
+          4100,
+          1050
+        ]
+      ]
+    },
+    {
+      "id": "entity-10",
+      "layer": "0",
+      "type": "line",
+      "points": [
+        [
+          5900,
+          150
+        ],
+        [
+          5900,
+          1050
+        ]
+      ]
+    },
+    {
+      "id": "entity-11",
+      "layer": "furniture",
+      "type": "polyline",
+      "points": [
+        [
+          750,
+          4950
+        ],
+        [
+          2250,
+          4950
+        ],
+        [
+          2250,
+          5650
+        ],
+        [
+          750,
+          5650
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "entity-12",
+      "layer": "furniture",
+      "type": "polyline",
+      "points": [
+        [
+          2600,
+          4950
+        ],
+        [
+          4100,
+          4950
+        ],
+        [
+          4100,
+          5650
+        ],
+        [
+          2600,
+          5650
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "entity-13",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        1500,
+        4550
+      ],
+      "radius": 250
+    },
+    {
+      "id": "entity-14",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        3350,
+        4550
+      ],
+      "radius": 250
+    },
+    {
+      "id": "entity-15",
+      "layer": "furniture",
+      "type": "polyline",
+      "points": [
+        [
+          500,
+          6350
+        ],
+        [
+          4400,
+          6350
+        ],
+        [
+          4400,
+          6750
+        ],
+        [
+          500,
+          6750
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "entity-16",
+      "layer": "furniture",
+      "type": "polyline",
+      "points": [
+        [
+          6700,
+          4550
+        ],
+        [
+          8350,
+          4550
+        ],
+        [
+          8350,
+          5750
+        ],
+        [
+          6700,
+          5750
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "entity-17",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        6300,
+        4850
+      ],
+      "radius": 220
+    },
+    {
+      "id": "entity-18",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        6300,
+        5450
+      ],
+      "radius": 220
+    },
+    {
+      "id": "entity-19",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        8750,
+        4850
+      ],
+      "radius": 220
+    },
+    {
+      "id": "entity-20",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        8750,
+        5450
+      ],
+      "radius": 220
+    },
+    {
+      "id": "entity-21",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        7100,
+        6150
+      ],
+      "radius": 220
+    },
+    {
+      "id": "entity-22",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        8000,
+        6150
+      ],
+      "radius": 220
+    },
+    {
+      "id": "entity-23",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        7100,
+        4150
+      ],
+      "radius": 220
+    },
+    {
+      "id": "entity-24",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        8000,
+        4150
+      ],
+      "radius": 220
+    },
+    {
+      "id": "entity-25",
+      "layer": "furniture",
+      "type": "polyline",
+      "points": [
+        [
+          7300,
+          1000
+        ],
+        [
+          9300,
+          1000
+        ],
+        [
+          9300,
+          1700
+        ],
+        [
+          7300,
+          1700
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "entity-26",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        8300,
+        2200
+      ],
+      "radius": 250
+    },
+    {
+      "id": "entity-27",
+      "layer": "furniture",
+      "type": "polyline",
+      "points": [
+        [
+          1000,
+          800
+        ],
+        [
+          3100,
+          800
+        ],
+        [
+          3100,
+          1650
+        ],
+        [
+          1000,
+          1650
+        ]
+      ],
+      "closed": true
+    },
+    {
+      "id": "entity-28",
+      "layer": "furniture",
+      "type": "line",
+      "points": [
+        [
+          1300,
+          800
+        ],
+        [
+          1300,
+          1650
+        ]
+      ]
+    },
+    {
+      "id": "entity-29",
+      "layer": "furniture",
+      "type": "line",
+      "points": [
+        [
+          2800,
+          800
+        ],
+        [
+          2800,
+          1650
+        ]
+      ]
+    },
+    {
+      "id": "entity-30",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        3500,
+        1150
+      ],
+      "radius": 250
+    },
+    {
+      "id": "entity-31",
+      "layer": "furniture",
+      "type": "circle",
+      "center": [
+        3500,
+        1150
+      ],
+      "radius": 80
+    },
+    {
+      "id": "entity-32",
+      "layer": "axes",
+      "type": "line",
+      "points": [
+        [
+          5000,
+          200
+        ],
+        [
+          5000,
+          6800
+        ]
+      ]
+    },
+    {
+      "id": "entity-33",
+      "layer": "axes",
+      "type": "line",
+      "points": [
+        [
+          200,
+          3075
+        ],
+        [
+          9800,
+          3075
+        ]
+      ]
+    }
+  ]
+}

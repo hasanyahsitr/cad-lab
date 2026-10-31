@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#20242a" />
+    <title>CAD Lab — Çizim çalışma alanı</title>
+    <link rel="icon" href="/mark.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <header class="titlebar">
+      <a class="logo" href="/">C<span>CAD LAB</span></a
+      ><span id="drawing-name">Çizim 1</span><span class="alpha">GELİŞTİRME SÜRÜMÜ</span>
+      <div class="quick-tools">
+        <button id="new-drawing" title="Yeni çizim">Yeni</button
+        ><button id="open-drawing">Aç</button><button id="save-drawing">Kaydet</button
+        ><button id="export-dxf">DXF ↓</button
+        ><a href="https://github.com/hasanyahsitr/cad-lab" target="_blank" rel="noopener noreferrer"
+          >GitHub ↗</a
+        >
+      </div>
+    </header>
+    <div class="workspace-heading">
+      <strong>Çizim ve açıklama</strong><span>2B model alanı</span
+      ><a href="/index.html">3B geometri denemesi ↗</a>
+    </div>
+    <nav class="ribbon" aria-label="Çizim araçları">
+      <section class="ribbon-group">
+        <div class="tools">
+          <button data-tool="LINE"><b>╱</b>Çizgi<small>L</small></button
+          ><button data-tool="PLINE"><b>⌁</b>Çoklu çizgi<small>PL</small></button
+          ><button data-tool="RECTANG"><b>▭</b>Dikdörtgen<small>REC</small></button
+          ><button data-tool="CIRCLE"><b>◯</b>Çember<small>C</small></button>
+        </div>
+        <span>Çizim</span>
+      </section>
+      <section class="ribbon-group">
+        <div class="tools">
+          <button data-tool="MOVE"><b>✥</b>Taşı<small>M</small></button
+          ><button data-tool="COPY"><b>▣</b>Kopyala<small>CO</small></button
+          ><button data-command="ERASE"><b>⌫</b>Sil<small>E</small></button>
+        </div>
+        <span>Düzenleme</span>
+      </section>
+      <section class="ribbon-group">
+        <div class="tools">
+          <button data-command="UNDO"><b>↶</b>Geri al<small>U</small></button
+          ><button data-command="REDO"><b>↷</b>Yinele<small>REDO</small></button
+          ><button data-tool="DIST"><b>↔</b>Mesafe<small>DI</small></button
+          ><button id="zoom-fit"><b>⌗</b>Sığdır<small>Z E</small></button>
+        </div>
+        <span>Ölçüm ve görünüm</span>
+      </section>
+      <section class="ribbon-group layer-tools">
+        <label for="current-layer">Etkin katman</label
+        ><select id="current-layer" aria-label="Etkin katman"></select
+        ><span>Katmanlar</span>
+      </section>
+    </nav>
+    <div class="drawing-tab">
+      <span class="tab-active"
+        ><span class="tab-dot"></span><span id="tab-name">Çizim 1</span
+        ><span id="dirty-indicator" title="Kaydedilmemiş çizim">*</span></span
+      ><span class="tab-description">Model alanı · mm</span
+      ><button id="example">Örnek çizimi aç</button>
+    </div>
+    <main class="draft-workspace">
+      <section class="canvas-panel" aria-label="Çizim alanı">
+        <div class="view-label">ÜST <span>2B Tel kafes</span></div>
+        <svg
+          id="drawing-canvas"
+          tabindex="0"
+          role="application"
+          aria-label="CAD çizim alanı. Araç seçip noktaları tıklayın veya komut alanına koordinat yazın. Orta tuşla kaydırın, tekerlekle yakınlaştırın."
+        >
+          <defs>
+            <pattern id="drawing-grid" width="10" height="10" patternUnits="userSpaceOnUse">
+              <path
+                id="drawing-grid-lines"
+                d="M 10 0 L 0 0 0 10"
+                fill="none"
+                stroke="#38414b"
+                stroke-width="0.5"
+                vector-effect="non-scaling-stroke"
+              />
+            </pattern>
+          </defs>
+          <rect id="grid-surface" fill="url(#drawing-grid)" />
+          <g id="drawing-axes"></g>
+          <g id="entities" transform="scale(1,-1)"></g>
+          <g id="preview" transform="scale(1,-1)"></g>
+          <g id="cursor" transform="scale(1,-1)"></g>
+        </svg>
+        <div class="ucs" aria-hidden="true">
+          <span>Y ↑</span><span>└── X</span><small>WCS</small>
+        </div>
+        <div class="empty-guide" id="empty-guide">
+          <strong>Çizim alanınız hazır.</strong
+          ><span
+            >Çizgi veya çember seçerek başlayın.<br />Komut örneği:
+            <code>REC 0,0 100,60</code></span
+          >
+        </div>
+      </section>
+      <aside class="properties" aria-label="Katmanlar ve nesne özellikleri">
+        <h2>Özellikler</h2>
+        <div id="selection-properties">Nesne seçilmedi</div>
+        <h2>Katmanlar</h2>
+        <form id="layer-form">
+          <input
+            id="layer-name"
+            placeholder="Yeni katman adı"
+            aria-label="Yeni katman adı"
+            maxlength="80"
+            required
+          /><button type="submit" aria-label="Katman ekle">+</button>
+        </form>
+        <div id="layer-list"></div>
+        <div class="inspector-note">
+          Shift ile çoklu seçim.<br />Katman kilidi düzenlemeyi engeller.<br />Koordinatlar: x,y ·
+          Göreli: @x,y
+        </div>
+      </aside>
+    </main>
+    <section class="command-panel" aria-label="Komut satırı">
+      <div class="command-log" id="command-log" role="log" aria-live="polite"></div>
+      <form id="command-form">
+        <label for="command-input">Komut:</label
+        ><input
+          id="command-input"
+          autocomplete="off"
+          spellcheck="false"
+          placeholder="LINE, CIRCLE, RECTANG…"
+        /><button type="submit" aria-label="Komutu uygula">↵</button
+        ><button id="cancel-command" type="button">Esc · Bitir</button>
+      </form>
+      <p id="command-prompt" role="status">Komut girin veya bir nesne seçin</p>
+    </section>
+    <footer class="statusbar">
+      <strong>MODEL</strong><span id="coordinates">X: 0.0000 · Y: 0.0000</span>
+      <div>
+        <button id="toggle-grid" aria-pressed="true">Izgara F7</button
+        ><button id="toggle-snap" aria-pressed="false">Izgara yakala F9</button
+        ><button id="toggle-ortho" aria-pressed="false">Dik F8</button
+        ><button id="toggle-osnap" aria-pressed="true">Nesne yakala F3</button>
+      </div>
+      <span id="entity-count">0 nesne</span>
+    </footer>
+    <input id="drawing-file" type="file" accept=".json,.cadlab.json,.dxf" hidden />
+    <script type="module" src="/src/drawing/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#0d1318" />
+    <meta
+      name="description"
+      content="Yerel çalışan açık kaynak CAD denemesi: ölçülü model, düzenlenebilir proje, STEP ve STL çıktısı."
+    />
+    <title>CAD Lab — Tasarla. Değiştir. Üret.</title>
+    <link rel="icon" type="image/svg+xml" href="/mark.svg" />
+  </head>
+  <body>
+    <a class="skip-link" href="#dimensions">Ölçülere geç</a>
+    <header class="app-header">
+      <a class="brand" href="/" aria-label="CAD Lab ana ekran"
+        ><img src="/mark.svg" width="32" height="32" alt="" /><span
+          >CAD<span class="brand-light"> Lab</span></span
+        ></a
+      >
+      <div class="project-title">
+        <span class="project-dot"></span><span id="project-name">Bağlantı plakası</span
+        ><span class="alpha-label">ALPHA 01</span>
+      </div>
+      <a
+        class="source-link"
+        href="https://github.com/hasanyahsitr/cad-lab"
+        target="_blank"
+        rel="noopener noreferrer"
+        >GitHub <span aria-hidden="true">↗</span></a
+      >
+    </header>
+    <main class="workspace">
+      <aside class="inspector" aria-label="Model özellikleri">
+        <div class="eyebrow">AÇIK KAYNAK · YEREL CAD</div>
+        <h1>
+          Fikirden<br />
+          <span>gerçek parçaya.</span>
+        </h1>
+        <p class="intro">Ölçülerle tasarla. Değiştir, yeniden üret, dosyanı yanında götür.</p>
+        <div class="part-card">
+          <span class="part-icon" aria-hidden="true">▱</span>
+          <div><strong>Dört delikli plaka</strong><span>Parametrik katı model</span></div>
+          <span class="unit">mm</span>
+        </div>
+        <form id="dimensions" novalidate>
+          <fieldset id="parameter-fields">
+            <legend>Ölçüler <span>Tüm değerler milimetre</span></legend>
+            <label for="width"
+              >Genişlik
+              <span class="input-wrap"
+                ><input
+                  id="width"
+                  name="width"
+                  type="number"
+                  min="0.1"
+                  max="2000"
+                  step="0.1"
+                  required
+                /><span>mm</span></span
+              ></label
+            >
+            <label for="depth"
+              >Derinlik
+              <span class="input-wrap"
+                ><input
+                  id="depth"
+                  name="depth"
+                  type="number"
+                  min="0.1"
+                  max="2000"
+                  step="0.1"
+                  required
+                /><span>mm</span></span
+              ></label
+            >
+            <label for="thickness"
+              >Kalınlık
+              <span class="input-wrap"
+                ><input
+                  id="thickness"
+                  name="thickness"
+                  type="number"
+                  min="0.1"
+                  max="2000"
+                  step="0.1"
+                  required
+                /><span>mm</span></span
+              ></label
+            >
+            <div class="field-divider"></div>
+            <label for="hole_diameter"
+              >Delik çapı
+              <span class="input-wrap"
+                ><input
+                  id="hole_diameter"
+                  name="hole_diameter"
+                  type="number"
+                  min="0.1"
+                  max="2000"
+                  step="0.1"
+                  required
+                /><span>mm</span></span
+              ></label
+            >
+            <label for="margin"
+              >Merkez–kenar mesafesi
+              <span class="input-wrap"
+                ><input
+                  id="margin"
+                  name="margin"
+                  type="number"
+                  min="0.1"
+                  max="2000"
+                  step="0.1"
+                  required
+                /><span>mm</span></span
+              ></label
+            >
+          </fieldset>
+          <p class="field-help">
+            Dört deliğin merkezleri, ölçüler değiştiğinde kenarlara olan mesafesini korur.
+          </p>
+          <button class="primary-button" id="apply" type="submit" disabled>
+            Modeli oluştur <span aria-hidden="true">↗</span>
+          </button>
+          <button class="text-button" id="revert" type="button" hidden>
+            Son geçerli ölçülere dön
+          </button>
+        </form>
+        <p id="message" class="message" role="status" aria-live="polite">
+          Geometri çekirdeğine bağlanılıyor…
+        </p>
+        <div class="inspector-footer">
+          <span class="local-dot"></span><span>Hesapsız. Modelin bu bilgisayarda.</span
+          ><small>Geometri: build123d + Open CASCADE</small>
+        </div>
+      </aside>
+      <section class="viewport-panel" aria-label="Üç boyutlu model ve dosya işlemleri">
+        <div class="viewport-toolbar">
+          <div class="history-buttons">
+            <button id="undo" type="button" title="Geri al" aria-label="Geri al" disabled>↶</button
+            ><button id="redo" type="button" title="Yinele" aria-label="Yinele" disabled>↷</button
+            ><span class="toolbar-separator"></span
+            ><span class="viewport-label">MODEL GÖRÜNÜMÜ</span>
+          </div>
+          <div class="view-buttons">
+            <button id="iso" type="button" aria-label="İzometrik görünüm">3B</button
+            ><button id="top" type="button" aria-label="Üstten görünüm">Üst</button
+            ><button id="fit" type="button" aria-label="Modeli ekrana sığdır">Sığdır</button>
+          </div>
+        </div>
+        <div
+          id="viewport"
+          class="viewport"
+          tabindex="0"
+          role="img"
+          aria-label="CAD modeli. Fareyle sürükleyerek döndürün, tekerlekle yakınlaşın. Klavyede ok tuşlarıyla döndürün; artı/eksi ile yakınlaşın; F ile sığdırın."
+        >
+          <div class="viewport-caption">
+            <span class="live-dot"></span><span id="model-status">MODEL HAZIRLANIYOR</span>
+          </div>
+          <div id="loading" class="loading">Katı model hazırlanıyor…</div>
+          <div class="axes-key" aria-hidden="true">
+            <span class="axis-x">X</span><span class="axis-y">Y</span><span class="axis-z">Z</span>
+          </div>
+          <p class="viewport-hint">
+            Sürükle: döndür <span>·</span> Tekerlek: yakınlaş <span>·</span> F: sığdır
+          </p>
+        </div>
+        <div class="model-stats" aria-live="polite">
+          <div><span>Geometri</span><strong id="solid-status">—</strong></div>
+          <div>
+            <span>Hacim</span><strong id="volume">— <small>mm³</small></strong>
+          </div>
+          <div><span>Boyutlar</span><strong id="bounds">—</strong></div>
+          <div class="precision-tag">BREP <span>·</span> mm</div>
+        </div>
+        <section class="file-panel" aria-label="Proje ve dışa aktarma">
+          <div>
+            <h2>Tasarımın sende kalsın.</h2>
+            <p>Projeyi düzenlemek için kaydet. Üretim ve paylaşım için dışa aktar.</p>
+          </div>
+          <div class="file-actions">
+            <button id="open" type="button">Proje aç</button
+            ><button id="save" type="button" disabled>Projeyi kaydet</button
+            ><button id="step" class="export-button" type="button" disabled>
+              STEP <span aria-hidden="true">↓</span></button
+            ><button id="stl" class="export-button" type="button" disabled>
+              STL <span aria-hidden="true">↓</span></button
+            ><input
+              id="project-file"
+              type="file"
+              accept=".json,.cadlab.json,application/json"
+              hidden
+            />
+          </div>
+        </section>
+        <footer class="scope-note">
+          İlk çalışan CAD denemesi · Genel amaçlı eskiz ve montaj henüz yok.
+          <a
+            href="https://github.com/hasanyahsitr/cad-lab/blob/main/docs/ROADMAP.md"
+            target="_blank"
+            rel="noopener noreferrer"
+            >Yol haritası ↗</a
+          >
+        </footer>
+      </section>
+    </main>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
