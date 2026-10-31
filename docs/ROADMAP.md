@@ -15,6 +15,8 @@ The default page is now a drawing-first application; the 3D experiment remains a
 - [x] Independent Gemini 4 Argon High review, with incorporated tests and findings.
 - [x] Supported planar/mm ASCII DXF import, explicit rejection of unsupported geometry and an import report.
 - [x] Analytical window/crossing selection, including hollow-circle and closing-edge tests.
+- [x] Original layered office-layout example, exact MOVE/undo check and DXF round trip.
+- [x] Adaptive grid for small-part and building-scale drawings; 320/390/1280 px layout checks.
 - [ ] Independent CAD interchange verification and a shared generated schema.
 - [ ] Additional intersection snaps, spatial indexing and delta history.
 - [ ] ARC/SPLINE, OFFSET/TRIM/EXTEND/FILLET, blocks, dimensions, layouts and plotting.
@@ -35,7 +37,7 @@ The original milestones below describe the earlier reusable geometry experiment.
 - [x] Exact solid geometry and analytical volume checks.
 - [x] Versioned project save/load, without executing project-provided code.
 - [x] STEP and STL export; STEP reimport checks.
-- [x] Automated geometry, project, drawing-interchange and local HTTP tests (55 passing locally).
+- [x] Automated geometry, project, drawing-interchange and local HTTP tests (56 passing locally).
 - [x] GitHub CI execution on Windows and Linux, plus frontend tests/build.
 
 ## Milestone 2 — local interactive experiment

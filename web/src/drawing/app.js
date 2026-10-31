@@ -9,6 +9,7 @@ import {
 } from './model.js';
 import { CommandEngine } from './commands.js';
 import { entitiesInBox } from './selection.js';
+import { gridSpacing } from './grid.js';
 
 const $ = (id) => document.getElementById(id),
   NS = 'http://www.w3.org/2000/svg';
@@ -66,7 +67,8 @@ function pointAt(event) {
 function constrained(point) {
   snapped = settings.osnap ? snapPoint(point, store.document, 10 / view.scale) : null;
   if (snapped) return snapped;
-  const result = settings.snap ? point.map((v) => Math.round(v / 10) * 10) : point;
+  const spacing = gridSpacing(view.scale);
+  const result = settings.snap ? point.map((v) => Math.round(v / spacing) * spacing) : point;
   const base = engine.points.at(-1);
   if (settings.ortho && base) {
     if (Math.abs(result[0] - base[0]) >= Math.abs(result[1] - base[1])) return [result[0], base[1]];
@@ -100,6 +102,12 @@ function renderGeometry() {
   const box = bounds();
   canvas.setAttribute('viewBox', `${box.x} ${box.y} ${box.width} ${box.height}`);
   const grid = $('grid-surface');
+  const spacing = gridSpacing(view.scale);
+  $('drawing-grid').setAttribute('width', spacing);
+  $('drawing-grid').setAttribute('height', spacing);
+  $('drawing-grid-lines').setAttribute('d', `M ${spacing} 0 L 0 0 0 ${spacing}`);
+  $('toggle-grid').title = `Izgara aralığı: ${spacing} mm`;
+  $('toggle-snap').title = `Görünür ızgaraya yakala: ${spacing} mm`;
   for (const [key, value] of Object.entries(box)) grid.setAttribute(key, value);
   grid.hidden = !settings.grid;
   grid.style.display = settings.grid ? '' : 'none';

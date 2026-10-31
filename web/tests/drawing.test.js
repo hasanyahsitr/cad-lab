@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
 import {
   DrawingStore,
   drawingBounds,
@@ -8,6 +9,23 @@ import {
   snapPoint,
   validateDrawing,
 } from '../src/drawing/model.js';
+
+test('the original layered office example is editable with exact millimeter bounds', () => {
+  const source = JSON.parse(
+    readFileSync(new URL('../../examples/office-layout.cadlab.json', import.meta.url), 'utf8'),
+  );
+  const store = new DrawingStore(source);
+  assert.equal(store.document.layers.length, 3);
+  assert.deepEqual(drawingBounds(store.document), { minX: 0, minY: 0, maxX: 10000, maxY: 7000 });
+  const desk = store.document.entities.find(
+    (e) => e.type === 'polyline' && e.layer === 'furniture',
+  );
+  store.select(desk.id);
+  store.move([100, 0]);
+  assert.deepEqual(store.document.entities.find((e) => e.id === desk.id).points[0], [850, 4950]);
+  store.undo();
+  assert.deepEqual(store.document.entities.find((e) => e.id === desk.id).points[0], [750, 4950]);
+});
 
 test('exact and relative coordinates reject incomplete, non-finite and out-of-range inputs', () => {
   assert.deepEqual(parsePoint('10,-5'), [10, -5]);

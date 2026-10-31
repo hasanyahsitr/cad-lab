@@ -74,3 +74,10 @@ Local checks after these changes: **55 Python tests, 26 JavaScript tests**, Ruff
 Prettier and the Vite build pass. Browser checks confirmed a polar circle of radius
 15 mm, a diameter-20 circle of radius 10 mm, retention of completed polyline segments
 on Escape, and exit from an in-progress LINE after its layer is locked.
+
+The subsequent office-layout example adds one Python DXF round-trip test and one
+JavaScript exact-move/undo test. An adaptive-grid regression covers part-to-building
+scales. The current total is **56 Python and 28 JavaScript tests**. Browser checks
+also covered opening all 33 entities, moving a desk by exactly 100 mm and undoing
+the move. The screenshot in `docs/assets` shows the actual 1280 px layout check;
+temporary browser viewport overrides were reset afterward.

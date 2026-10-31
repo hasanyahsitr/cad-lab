@@ -11,6 +11,8 @@ selection, layers, snapping, undo/redo and DXF export. The original dimension-dr
 3D plate is retained as a separate engineering experiment. This is an early CAD core,
 not a complete AutoCAD replacement.
 
+![CAD Lab editing an original layered office-layout example](docs/assets/drafting-workbench.png)
+
 ## 2D drafting workbench
 
 The default page at **http://127.0.0.1:4310/** opens the drawing application. Supported
@@ -35,6 +37,13 @@ are rejected while keeping the current drawing. The import report explains which
 metadata is outside the supported subset. DWG support is not implemented.
 
 The 3D plate experiment is at **http://127.0.0.1:4310/index.html**.
+
+Use **Aç** to open [the original office-layout example](examples/office-layout.cadlab.json):
+33 editable entities, three layers and a 10 × 7 meter footprint stored in millimeters.
+Walls, furniture and locked construction axes can be selected and edited separately.
+This simplified linework is a drafting example, not construction documentation.
+The visible grid adapts to zoom using readable 1/2/5 intervals; grid snapping uses
+the displayed spacing. Coordinate input retains exact millimeter values.
 
 The owner requested independent review through Google Antigravity/Gemini 4 Argon High.
 See the [incorporated review findings](docs/REVIEW-RESULTS.md) and [product direction](docs/AUTOCAD-DIRECTION.md).

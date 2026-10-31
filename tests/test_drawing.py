@@ -1,5 +1,6 @@
 import io
 import json
+from pathlib import Path
 
 import ezdxf
 import pytest
@@ -41,6 +42,21 @@ def test_dxf_contains_exact_entities_units_and_layer_properties():
     assert document.layers.get("0").is_locked()
     assert document.layers.get("0").rgb == (133, 199, 239)
     assert not document.audit().has_errors
+
+
+def test_office_example_round_trips_every_entity_and_layer_state():
+    source = Path(__file__).resolve().parents[1] / "examples/office-layout.cadlab.json"
+    original = json.loads(source.read_text(encoding="utf-8"))
+    encoded = drawing_to_dxf(json.dumps(original)).decode("utf-8")
+    imported = drawing_from_dxf(encoded)["drawing"]
+    assert len(imported["entities"]) == len(original["entities"])
+    for before, after in zip(original["entities"], imported["entities"], strict=True):
+        for key in ("type", "points", "closed", "center", "radius"):
+            assert before.get(key) == after.get(key)
+    by_name = {layer["name"]: layer for layer in imported["layers"]}
+    for layer in original["layers"]:
+        for key in ("color", "visible", "locked"):
+            assert layer[key] == by_name[layer["name"]][key]
 
 
 @pytest.mark.parametrize(

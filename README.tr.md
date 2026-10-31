@@ -15,6 +15,8 @@ eşdeğerliği, montaj ve genel amaçlı kısıt çözücü tamamlanmış özell
 Gelişmeler küçük commit'ler, tekrar üretilebilir örnekler ve doğrulama sonuçlarıyla
 GitHub'da izlenir. Kişisel web sitesi ve bağlantı sayfalarından ayrı bir projedir.
 
+![Katmanlı ofis taslağı açık olan CAD Lab çalışma alanı](docs/assets/drafting-workbench.png)
+
 ## Yerelde çalıştırma
 
 Python 3.12 ve Node.js 24 ile Windows PowerShell:
@@ -53,6 +55,13 @@ Farklı bir CAD programında doğrulama ve gerçek kullanıcı karşılaştırma
 
 Google Antigravity'deki Gemini 4 Argon High incelemesinin uygulanmış sonuçları:
 [ortak inceleme notları](docs/REVIEW-RESULTS.md).
+
+**Aç** ile [ofis örneğini](examples/office-layout.cadlab.json) yükleyebilirsiniz:
+10 × 7 metre yerleşim, mm koordinatları, 33 düzenlenebilir nesne ve üç katman içerir.
+Mobilyayı taşıyıp geri alın; kilitli akslara dokunmadan duvar çizgilerini düzenleyin.
+Bu basitleştirilmiş taslak bir uygulama örneğidir; inşaat uygulama projesi değildir.
+Izgara yakınlaştırmaya göre okunabilir 1/2/5 aralıklarına uyarlanır; ızgara yakalama
+görünen aralığı kullanır. Komutla girilen koordinatlar mm hassasiyetini korur.
 
 Soldan sağa sürükleyerek tamamen içerideki nesneleri seçin; sağdan sola sürükleme,
 pencereyle gerçekten kesişen nesneleri de seçer. Boş çember içini taramak çemberi seçmez.
