@@ -1,12 +1,13 @@
 import './drafting.css';
 import {DrawingStore,emptyDrawing,validateDrawing,drawingBounds,snapPoint,distance} from './model.js';
 import {CommandEngine} from './commands.js';
+import {entitiesInBox} from './selection.js';
 
 const $=id=>document.getElementById(id),NS='http://www.w3.org/2000/svg';
 const store=new DrawingStore();
 const view={center:[50,30],scale:4};
 const settings={grid:true,snap:false,ortho:false,osnap:true};
-let worldCursor=null,snapped=null,panning=null,saved=JSON.stringify(store.document),requestBusy=false;
+let worldCursor=null,snapped=null,panning=null,selectBox=null,saved=JSON.stringify(store.document),requestBusy=false;
 const canvas=$('drawing-canvas');
 const engine=new CommandEngine(store,render,log,fit);
 
@@ -38,6 +39,7 @@ function renderGeometry(){
   const layers=new Map(store.document.layers.map(layer=>[layer.id,layer]));
   for(const entity of store.document.entities){const layer=layers.get(entity.layer);if(!layer.visible)continue;const group=node('g',{'data-entity':entity.id,class:'entity-group'},$('entities'));drawEntity(entity,group,layer.color,store.selection.has(entity.id)?'selected':'');const hit=drawEntity(entity,group,'transparent','hit');hit.classList.remove('entity');}
   $('preview').replaceChildren();
+  if(selectBox){const a=selectBox.start,b=selectBox.end,crossing=a[0]>b[0];node('rect',{x:Math.min(a[0],b[0]),y:Math.min(a[1],b[1]),width:Math.abs(a[0]-b[0]),height:Math.abs(a[1]-b[1]),stroke:crossing?'#77d89b':'#70bcff',fill:crossing?'#77d89b22':'#70bcff22','stroke-width':1,'stroke-dasharray':crossing?'5 3':'none','vector-effect':'non-scaling-stroke'},$('preview'));}
   const pending=engine.points,tip=worldCursor;
   if(pending.length){
     if(['LINE','PLINE'].includes(engine.tool))drawEntity({type:'polyline',points:[...pending,...(tip?[tip]:[])],closed:false},$('preview'),'#83c7f9');
@@ -88,13 +90,19 @@ canvas.addEventListener('pointerdown',event=>{
   if(event.button===1){event.preventDefault();panning={x:event.clientX,y:event.clientY,center:[...view.center]};canvas.setPointerCapture(event.pointerId);return;}
   if(event.button!==0)return;
   if(engine.tool){attempt(()=>engine.point(constrained(pointAt(event))));return;}
-  const target=event.target.closest('[data-entity]');store.select(target?.dataset.entity,event.shiftKey);render();
+  const target=event.target.closest('[data-entity]');
+  if(target){store.select(target.dataset.entity,event.shiftKey);render();}
+  else{const point=pointAt(event);selectBox={start:point,end:point,additive:event.shiftKey};canvas.setPointerCapture(event.pointerId);}
 });
 canvas.addEventListener('pointermove',event=>{
   if(panning){view.center=[panning.center[0]-(event.clientX-panning.x)/view.scale,panning.center[1]+(event.clientY-panning.y)/view.scale];renderGeometry();return;}
+  if(selectBox){selectBox.end=pointAt(event);renderGeometry();return;}
   worldCursor=constrained(pointAt(event));$('coordinates').textContent=`X: ${worldCursor[0].toFixed(4)} · Y: ${worldCursor[1].toFixed(4)}`;renderGeometry();
 });
-canvas.addEventListener('pointerup',()=>{panning=null;});canvas.addEventListener('pointercancel',()=>{panning=null;});
+canvas.addEventListener('pointerup',()=>{
+  panning=null;
+  if(selectBox){const box=selectBox;selectBox=null;if(!box.additive)store.selection.clear();if(distance(box.start,box.end)*view.scale>3)for(const id of entitiesInBox(store.document,box.start,box.end))store.selection.add(id);render();}
+});canvas.addEventListener('pointercancel',()=>{panning=null;selectBox=null;renderGeometry();});
 canvas.addEventListener('pointerleave',()=>{worldCursor=null;snapped=null;renderGeometry();});
 canvas.addEventListener('wheel',event=>{event.preventDefault();const before=pointAt(event);view.scale=Math.max(0.0001,Math.min(10000,view.scale*Math.exp(-event.deltaY*0.001)));const after=pointAt(event);view.center=view.center.map((v,i)=>v+before[i]-after[i]);renderGeometry();},{passive:false});
 document.addEventListener('keydown',event=>{
@@ -110,7 +118,20 @@ document.addEventListener('keydown',event=>{
 });
 $('save-drawing').addEventListener('click',()=>attempt(()=>{engine.finish();const text=JSON.stringify(store.document,null,2)+'\n';download(text,'drawing.cadlab.json');saved=JSON.stringify(store.document);log('Düzenlenebilir çizim kaydedildi.');render();}));
 $('open-drawing').addEventListener('click',()=>$('drawing-file').click());
-$('drawing-file').addEventListener('change',async event=>{const file=event.target.files[0];if(!file)return;try{if(file.size>1024*1024)throw new Error('En fazla 1 MiB çizim dosyası açılabilir.');const next=validateDrawing(JSON.parse(await file.text()));engine.cancel();store.commit(next);saved=JSON.stringify(store.document);log('Çizim açıldı.');render();fit();}catch(error){log(error.message,true);}finally{event.target.value='';}});
+$('drawing-file').addEventListener('change',async event=>{
+  const file=event.target.files[0];if(!file||requestBusy)return;
+  try{
+    if(file.size>1024*1024)throw new Error('En fazla 1 MiB çizim dosyası açılabilir.');
+    const text=await file.text();let data;
+    requestBusy=true;$('open-drawing').disabled=true;
+    if(file.name.toLowerCase().endsWith('.dxf')){
+      const response=await fetch('/api/drawing/import-dxf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({dxf:text})});
+      const result=await response.json();if(!response.ok)throw new Error(result.error||'DXF açılamadı.');
+      data=result.drawing;log(`DXF: ${result.report.entities} nesne, mm. Yalnız düzlemsel model geometrisi; kullanılmayan blok tanımları, ek veriler ve pafta ayarları alınmadı.`);
+    }else data=JSON.parse(text);
+    const next=validateDrawing(data);engine.cancel();store.commit(next);saved=JSON.stringify(store.document);log('Çizim açıldı.');render();fit();
+  }catch(error){log(error.message,true);}finally{event.target.value='';requestBusy=false;$('open-drawing').disabled=false;}
+});
 $('new-drawing').addEventListener('click',()=>{if(saved!==JSON.stringify(store.document)){log('Yeni çizimden önce mevcut çizimi kaydedin.',true);return;}engine.cancel();store.commit(emptyDrawing());saved=JSON.stringify(store.document);store.layer='0';render();fit();});
 $('example').addEventListener('click',()=>{if(store.document.entities.length){log('Örneği açmak için boş bir çizime geçin.',true);return;}engine.cancel();const drawing=emptyDrawing();drawing.name='Bağlantı plakası — 2B';drawing.entities=[{id:'outer',type:'polyline',layer:'0',points:[[0,0],[80,0],[80,50],[0,50]],closed:true},...[[10,10],[10,40],[70,10],[70,40]].map((center,i)=>({id:`hole-${i}`,type:'circle',layer:'0',center,radius:2.5}))];store.commit(drawing);log('Örnek çizim: bir kapalı çoklu çizgi ve dört çember.');render();fit();});
 $('export-dxf').addEventListener('click',async()=>{if(requestBusy)return;try{engine.finish();requestBusy=true;$('export-dxf').disabled=true;const response=await fetch('/api/drawing/dxf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(store.document)});if(!response.ok){const data=await response.json();throw new Error(data.error||'DXF dışa aktarılamadı.');}download(await response.text(),'drawing.dxf','application/dxf');log('DXF dışa aktarıldı: LINE, LWPOLYLINE ve CIRCLE.');}catch(error){log(error.message,true);}finally{requestBusy=false;$('export-dxf').disabled=false;}});

@@ -26,7 +26,7 @@ The following is a summary, not a verbatim transcript or a claim of independent 
 
 ## Open engineering work from the review
 
-- Window/crossing selection with analytical geometry tests; current selection is single-object/Shift multi-pick.
+- Window/crossing selection has since been implemented with analytical geometry tests.
 - Additional snap modes and intersections; current snaps cover endpoints, midpoints, circle centers and quadrants.
 - Command-first selection workflows, repeated COPY destinations, direct-distance entry, and additional modification commands.
 - Delta-based history and a spatial index for large drawings; current bounded snapshot history is an early implementation, not a large-project performance claim.
@@ -36,3 +36,14 @@ The following is a summary, not a verbatim transcript or a claim of independent 
 Licensing and format assertions in the model's answer must be checked against upstream
 sources before adopting them as project policy. No claim of a complete AutoCAD replacement
 or production-ready CAD certification is made.
+
+## Subsequent implementation checks
+
+- Browser-driven DXF export and reimport preserved a closed rectangle and two circles
+  after MOVE/COPY; exported circle centers were (30,20) and (70,20), radius 5 mm.
+- Browser window selection picked one circle; crossing selection picked both.
+- Unsupported TEXT entities were rejected while preserving the existing drawing.
+- Windows CRLF DXF input initially lost header interpretation through StringIO. Universal
+  newline normalization fixed it; a regression test now covers units and entity count.
+- A second read-only review was requested for commit `91b03fc`. Antigravity displayed
+  an agent execution error during that round; no completed second review is claimed yet.

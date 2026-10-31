@@ -1,5 +1,14 @@
 # Engineering decisions
 
+## Latest direction clarification
+
+The owner explicitly wants an AutoCAD-class application, not a product limited to the
+plate experiment. The default UI is now the 2D drafting workspace, with original code
+and assets implementing familiar workflows. The existing 3D experiment remains at
+`/index.html`. See `AUTOCAD-DIRECTION.md` and `REVIEW-RESULTS.md` for the updated scope
+and the actually completed Gemini collaboration. The earlier sections below describe
+the initial geometry milestone and are retained as development history.
+
 ## Direction and scope
 
 The user approved starting an independent open-source CAD project and publishing

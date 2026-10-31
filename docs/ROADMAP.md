@@ -13,8 +13,10 @@ The default page is now a drawing-first application; the 3D experiment remains a
 - [x] Grid, orthogonal input and endpoint/midpoint/center/quadrant snapping.
 - [x] Bounded drawing history, editable JSON save/open and actual DXF export.
 - [x] Independent Gemini 4 Argon High review, with incorporated tests and findings.
-- [ ] DXF import, independent CAD interchange verification and a shared generated schema.
-- [ ] Window/crossing selection, intersections, spatial indexing and delta history.
+- [x] Supported planar/mm ASCII DXF import, explicit rejection of unsupported geometry and an import report.
+- [x] Analytical window/crossing selection, including hollow-circle and closing-edge tests.
+- [ ] Independent CAD interchange verification and a shared generated schema.
+- [ ] Additional intersection snaps, spatial indexing and delta history.
 - [ ] ARC/SPLINE, OFFSET/TRIM/EXTEND/FILLET, blocks, dimensions, layouts and plotting.
 - [ ] DWG interoperability, general 3D modeling and a packaged desktop application.
 

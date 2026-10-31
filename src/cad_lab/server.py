@@ -9,7 +9,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from urllib.parse import unquote, urlsplit
 
-from cad_lab.drawing import MAX_DRAWING_BYTES, drawing_to_dxf
+from cad_lab.drawing import MAX_DRAWING_BYTES, drawing_from_dxf, drawing_to_dxf
 from cad_lab.geometry import build_plate, export_part, mesh_data
 from cad_lab.project import MAX_PROJECT_BYTES, Project, ProjectError
 
@@ -104,7 +104,10 @@ class CADHandler(BaseHTTPRequestHandler):
         if not self._local_request():
             return
         route = urlsplit(self.path).path
-        body_limit = MAX_DRAWING_BYTES if route == "/api/drawing/dxf" else MAX_PROJECT_BYTES
+        if route == "/api/drawing/import-dxf":
+            body_limit = 2 * MAX_DRAWING_BYTES + 1024
+        else:
+            body_limit = MAX_DRAWING_BYTES if route == "/api/drawing/dxf" else MAX_PROJECT_BYTES
         try:
             size = int(self.headers.get("Content-Length", "0"))
         except ValueError:
@@ -126,6 +129,7 @@ class CADHandler(BaseHTTPRequestHandler):
                 "/api/export/step",
                 "/api/export/stl",
                 "/api/drawing/dxf",
+                "/api/drawing/import-dxf",
             }:
                 self._json(404, {"error": "Unknown endpoint."})
                 return
@@ -136,6 +140,15 @@ class CADHandler(BaseHTTPRequestHandler):
                 self._send(
                     200, drawing_to_dxf(raw.decode("utf-8")), "application/dxf", "drawing.dxf"
                 )
+                return
+            if route == "/api/drawing/import-dxf":
+                try:
+                    data = json.loads(raw.decode("utf-8"))
+                except (ValueError, RecursionError) as exc:
+                    raise ProjectError("Invalid DXF request.") from exc
+                if not isinstance(data, dict) or set(data) != {"dxf"}:
+                    raise ProjectError("Send the DXF content only.")
+                self._json(200, drawing_from_dxf(data["dxf"]))
                 return
             project = Project.from_json(raw.decode("utf-8"))
             # Serve browser assets concurrently while serializing all OCCT operations.

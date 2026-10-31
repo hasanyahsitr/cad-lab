@@ -22,11 +22,17 @@ Coordinates use `.` for decimals and `,` between X/Y. Relative coordinates use
 `@20,0`; polar coordinates use `@50<90`. LINE/PLINE continue until Enter/Esc, `C`
 closes them, and command-local `U` removes the last pending point. CIRCLE accepts
 `D` for diameter. Shift-click toggles multi-selection; middle-drag pans; the wheel zooms.
+Dragging left-to-right selects completely enclosed objects. Right-to-left crossing
+selection tests actual line segments and circle circumferences, not only their bounds.
 
 Layer visibility, locking and color, grid display/snap, orthographic input and
 endpoint/midpoint/center/quadrant snapping are implemented. Save/reopen editable JSON
 drawings and export LINE/LWPOLYLINE/CIRCLE entities to actual DXF, including layer
-colors/visibility/locking and millimeter units. DXF import and DWG support are not implemented.
+colors/visibility/locking and millimeter units. Import ASCII DXF files for this same
+planar model-space subset, including Windows CRLF files. Unsupported geometry,
+non-mm units, entity style overrides, polyline arcs/widths and paper-space content
+are rejected while keeping the current drawing. The import report explains which
+metadata is outside the supported subset. DWG support is not implemented.
 
 The 3D plate experiment is at **http://127.0.0.1:4310/index.html**.
 
@@ -83,7 +89,7 @@ npm --prefix web test
 ```
 
 Known limits: no interactive constraint solver, arbitrary 3D feature tree, assemblies,
-dimensions/layouts/plotting, DWG, DXF import, or packaged desktop installer. The 2D
+dimensions/layouts/plotting, DWG, or packaged desktop installer. The 2D
 workbench implements a limited entity and command subset. STEP/DXF round trips use
 their respective upstream libraries; independent CAD-program validation and real-user
 workflow comparisons remain required. Snapshot history and SVG rendering are initial

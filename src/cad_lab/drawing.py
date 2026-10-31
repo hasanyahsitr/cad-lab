@@ -4,12 +4,127 @@ import io
 import json
 import math
 import re
+import uuid
 
 import ezdxf
 
 from cad_lab.project import ProjectError
 
 MAX_DRAWING_BYTES = 1024 * 1024
+
+
+def drawing_from_dxf(content):
+    """Import supported planar model-space entities, rejecting unsupported geometry."""
+    if not isinstance(content, str) or len(content.encode("utf-8")) > MAX_DRAWING_BYTES:
+        raise ProjectError("DXF input exceeds the 1 MiB limit.")
+    if not content.strip():
+        raise ProjectError("DXF input is empty.")
+    try:
+        document = ezdxf.read(io.StringIO(content, newline=None))
+    except (ezdxf.DXFError, ValueError, IndexError) as exc:
+        raise ProjectError("Invalid ASCII DXF input.") from exc
+    if document.units != ezdxf.units.MM:
+        raise ProjectError("Only DXF files explicitly declaring millimeter units are supported.")
+    model = document.modelspace()
+    if len(model) > 5000:
+        raise ProjectError("At most 5000 entities are supported.")
+    unsupported = {entity.dxftype() for entity in model} - {"LINE", "LWPOLYLINE", "CIRCLE"}
+    if unsupported:
+        raise ProjectError("Unsupported DXF entities: " + ", ".join(sorted(unsupported)))
+    if any(len(layout) for layout in document.layouts if layout.name != "Model"):
+        raise ProjectError(
+            "Paper-space content is not supported; the original file was not changed."
+        )
+    used_layers = {entity.dxf.layer for entity in model} | {"0"}
+    if len(used_layers) > 100:
+        raise ProjectError("At most 100 used layers are supported.")
+    layers = []
+    for name in sorted(used_layers, key=lambda value: (value != "0", value)):
+        if name not in document.layers:
+            raise ProjectError("An entity references a missing DXF layer.")
+        layer = document.layers.get(name)
+        if layer.dxf.linetype.upper() != "CONTINUOUS":
+            raise ProjectError("Non-continuous layer linetypes are not supported.")
+        rgb = layer.rgb or ezdxf.colors.aci2rgb(abs(layer.dxf.color))
+        layers.append(
+            {
+                "id": name,
+                "name": name,
+                "color": "#" + "".join(f"{v:02x}" for v in rgb),
+                "visible": not layer.is_off() and not layer.is_frozen(),
+                "locked": layer.is_locked(),
+            }
+        )
+    entities = []
+    for entity in model:
+        if (
+            entity.dxf.get("color", 256) != 256
+            or entity.dxf.hasattr("true_color")
+            or entity.dxf.get("linetype", "BYLAYER").upper() != "BYLAYER"
+            or entity.dxf.get("lineweight", -1) != -1
+            or abs(entity.dxf.get("thickness", 0)) > 1e-9
+        ):
+            raise ProjectError(
+                "Per-entity style overrides and extrusion thickness are not supported."
+            )
+        extrusion = entity.dxf.get("extrusion", (0, 0, 1))
+        if any(abs(a - b) > 1e-9 for a, b in zip(extrusion, (0, 0, 1), strict=True)):
+            raise ProjectError("Only world-XY planar entities are supported.")
+        common = {"id": str(uuid.uuid4()), "layer": entity.dxf.layer}
+        kind = entity.dxftype()
+        if kind == "LINE":
+            start, end = entity.dxf.start, entity.dxf.end
+            if abs(start.z) > 1e-9 or abs(end.z) > 1e-9:
+                raise ProjectError("3D lines are not supported in the 2D importer.")
+            entities.append({**common, "type": "line", "points": [list(start)[:2], list(end)[:2]]})
+        elif kind == "CIRCLE":
+            if abs(entity.dxf.center.z) > 1e-9:
+                raise ProjectError("Only circles in the world-XY plane are supported.")
+            entities.append(
+                {
+                    **common,
+                    "type": "circle",
+                    "center": list(entity.dxf.center)[:2],
+                    "radius": entity.dxf.radius,
+                }
+            )
+        else:
+            points = list(entity.get_points("xyseb"))
+            if (
+                abs(entity.dxf.elevation) > 1e-9
+                or abs(entity.dxf.const_width) > 1e-9
+                or any(any(abs(v) > 1e-9 for v in p[2:]) for p in points)
+            ):
+                raise ProjectError("Polyline arcs, widths and elevation are not supported.")
+            entities.append(
+                {
+                    **common,
+                    "type": "polyline",
+                    "points": [list(p)[:2] for p in points],
+                    "closed": entity.closed,
+                }
+            )
+    drawing = {
+        "format": "cad-lab.drawing",
+        "schema_version": 1,
+        "units": "mm",
+        "name": "DXF çizimi",
+        "layers": layers,
+        "entities": entities,
+    }
+    # Reuse export validation to enforce the same accepted numeric/entity subset.
+    drawing_to_dxf(json.dumps(drawing))
+    return {
+        "drawing": drawing,
+        "report": {
+            "entities": len(entities),
+            "units": "mm",
+            "scope": "Model space, planar geometry only",
+            "note": (
+                "Unused block definitions, extended metadata and layout settings are not imported."
+            ),
+        },
+    }
 
 
 def _number(value):

@@ -28,10 +28,10 @@ npm --prefix web run build
 .\.venv\Scripts\python.exe -m cad_lab.server
 ```
 
-Tarayıcıda **http://127.0.0.1:4310** adresini açın. Ölçüleri değiştirdikten sonra
-“Modeli oluştur” düğmesine basın. Hatalı ölçülerde önceki geçerli model korunur;
-uygulanmamış değişiklikler varken indirmeler kapatılır. Proje dosyası düzenlenebilir
-ölçüleri saklar; STEP dosyası işlem geçmişinin yerine geçmez.
+Tarayıcıda **http://127.0.0.1:4310** adresini açın. Ana sayfa 2B çizim alanıdır.
+3B plaka denemesi `/index.html` adresindedir; buradaki “Modeli oluştur” düğmesi
+plaka ölçülerini uygular. Proje dosyası düzenlenebilir veriyi saklar;
+STEP dosyası işlem geçmişinin yerine geçmez.
 
 Görünümde ok tuşları döndürür, `+`/`-` yakınlaştırır, `F` modeli sığdırır.
 Hesap veya bulut geometri servisi gerekmez. Bağımlılıklar kurulduktan sonra model
@@ -45,12 +45,17 @@ Ondalık ayıracı nokta, koordinat ayıracı virgüldür; göreli giriş `@20,0
 giriş `@50<90` biçimindedir. Shift ile çoklu seçim, orta fare tuşuyla kaydırma yapılır.
 
 2B çizim JSON olarak kaydedilip yeniden açılır; desteklenen çizgi, çoklu çizgi ve
-çemberler DXF'e aktarılır. DXF içe aktarma, DWG, ölçülendirme/pafta, montaj ve kurulum
-paketi henüz yok. 3B denemesi `/index.html` adresindedir; STEP/STL çıktısı buradan alınır.
+çemberler DXF'e aktarılır. Aynı düzlemsel model-altkümesindeki, mm birimi açıkça
+tanımlı ASCII DXF dosyaları da açılır. Desteklenmeyen öğeler mevcut çizim korunarak
+reddedilir; aktarım raporunda kapsam belirtilir. DWG, ölçülendirme/pafta, montaj ve
+kurulum paketi henüz yok. 3B denemesi `/index.html` adresindedir; STEP/STL çıktısı buradan alınır.
 Farklı bir CAD programında doğrulama ve gerçek kullanıcı karşılaştırması bekliyor.
 
 Google Antigravity'deki Gemini 4 Argon High incelemesinin uygulanmış sonuçları:
 [ortak inceleme notları](docs/REVIEW-RESULTS.md).
+
+Soldan sağa sürükleyerek tamamen içerideki nesneleri seçin; sağdan sola sürükleme,
+pencereyle gerçekten kesişen nesneleri de seçer. Boş çember içini taramak çemberi seçmez.
 
 - [Yol haritası](docs/ROADMAP.md)
 - [Teknik kararlar](docs/DECISIONS.md)

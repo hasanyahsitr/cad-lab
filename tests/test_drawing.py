@@ -4,7 +4,7 @@ import json
 import ezdxf
 import pytest
 
-from cad_lab.drawing import drawing_to_dxf
+from cad_lab.drawing import drawing_from_dxf, drawing_to_dxf
 from cad_lab.project import ProjectError
 
 
@@ -59,3 +59,43 @@ def test_invalid_drawing_export_is_rejected(mutation):
     mutation(data)
     with pytest.raises(ProjectError):
         drawing_to_dxf(json.dumps(data))
+
+
+def test_supported_dxf_round_trip_preserves_geometry_and_layer_state():
+    encoded = drawing_to_dxf(json.dumps(sample())).decode("utf-8")
+    result = drawing_from_dxf(encoded)
+    assert result["report"]["entities"] == 3
+    assert result["drawing"]["layers"][0]["locked"]
+    original = sample()["entities"]
+    imported = result["drawing"]["entities"]
+    for first, second in zip(original, imported, strict=True):
+        for key, value in first.items():
+            if key != "id":
+                assert second[key] == value
+
+
+def test_windows_crlf_input_preserves_header_units_and_geometry():
+    content = drawing_to_dxf(json.dumps(sample())).decode("utf-8").replace("\n", "\r\n")
+    result = drawing_from_dxf(content)
+    assert result["report"]["units"] == "mm"
+    assert result["report"]["entities"] == 3
+
+
+@pytest.mark.parametrize("kind", ["TEXT", "POLYLINE_BULGE", "UNIT_INCH", "Z_LINE", "PAPERSPACE"])
+def test_unsupported_dxf_is_rejected_instead_of_silently_dropping_geometry(kind):
+    document = ezdxf.new("R2010", units=ezdxf.units.MM)
+    model = document.modelspace()
+    if kind == "TEXT":
+        model.add_text("Do not silently lose me")
+    elif kind == "POLYLINE_BULGE":
+        model.add_lwpolyline([(0, 0, 0, 0, 1), (10, 0, 0, 0, 0)])
+    elif kind == "UNIT_INCH":
+        document.units = ezdxf.units.IN
+    elif kind == "Z_LINE":
+        model.add_line((0, 0, 5), (10, 10, 5))
+    else:
+        document.layout().add_line((0, 0), (10, 10))
+    output = io.StringIO()
+    document.write(output)
+    with pytest.raises(ProjectError):
+        drawing_from_dxf(output.getvalue())
