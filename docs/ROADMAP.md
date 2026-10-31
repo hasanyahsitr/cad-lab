@@ -35,8 +35,8 @@ The original milestones below describe the earlier reusable geometry experiment.
 - [x] Exact solid geometry and analytical volume checks.
 - [x] Versioned project save/load, without executing project-provided code.
 - [x] STEP and STL export; STEP reimport checks.
-- [x] Automated geometry, project, and local HTTP tests (37 passing locally).
-- [ ] CI execution on GitHub.
+- [x] Automated geometry, project, drawing-interchange and local HTTP tests (55 passing locally).
+- [x] GitHub CI execution on Windows and Linux, plus frontend tests/build.
 
 ## Milestone 2 — local interactive experiment
 

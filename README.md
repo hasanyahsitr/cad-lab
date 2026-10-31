@@ -84,6 +84,7 @@ Additional checks:
 
 ```powershell
 npm --prefix web test
+npm --prefix web run format:check
 .\.venv\Scripts\python.exe -m ruff check .
 .\.venv\Scripts\python.exe -m ruff format --check .
 ```

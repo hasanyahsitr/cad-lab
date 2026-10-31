@@ -34,7 +34,10 @@ export function createViewport(container) {
   function render() {
     if (renderQueued) return;
     renderQueued = true;
-    requestAnimationFrame(() => { renderQueued = false; renderer.render(scene, camera); });
+    requestAnimationFrame(() => {
+      renderQueued = false;
+      renderer.render(scene, camera);
+    });
   }
   controls.addEventListener('change', render);
   function resize() {
@@ -54,14 +57,17 @@ export function createViewport(container) {
     const radius = Math.hypot(width, depth, thickness) / 2;
     const halfFov = THREE.MathUtils.degToRad(camera.fov / 2);
     const horizontalFov = Math.atan(Math.tan(halfFov) * camera.aspect);
-    const distance = radius / Math.sin(Math.min(halfFov, horizontalFov)) * 1.22;
+    const distance = (radius / Math.sin(Math.min(halfFov, horizontalFov))) * 1.22;
     camera.near = Math.max(0.01, distance / 1000);
     camera.far = Math.max(10000, distance * 20);
     camera.updateProjectionMatrix();
-    camera.position.copy(center).add(
-      new THREE.Vector3(...(view === 'top' ? [0, -0.0001, 1] : [1.1, -1.4, 1.15]))
-        .normalize().multiplyScalar(distance),
-    );
+    camera.position
+      .copy(center)
+      .add(
+        new THREE.Vector3(...(view === 'top' ? [0, -0.0001, 1] : [1.1, -1.4, 1.15]))
+          .normalize()
+          .multiplyScalar(distance),
+      );
     controls.target.copy(center);
     controls.maxDistance = Math.max(16000, distance * 5);
     controls.update();
@@ -71,20 +77,35 @@ export function createViewport(container) {
   function setModel(mesh, parameters) {
     const geometry = new THREE.BufferGeometry();
     // Unindexed triangles preserve sharp face normals and smooth silhouette edges.
-    const flat = mesh.triangles.flatMap(triangle => triangle.flatMap(index => mesh.vertices[index]));
+    const flat = mesh.triangles.flatMap((triangle) =>
+      triangle.flatMap((index) => mesh.vertices[index]),
+    );
     geometry.setAttribute('position', new THREE.Float32BufferAttribute(flat, 3));
     geometry.computeVertexNormals();
     const next = new THREE.Group();
-    next.add(new THREE.Mesh(geometry, new THREE.MeshStandardMaterial({
-      color: 0xc1d0db, roughness: 0.38, metalness: 0.35, side: THREE.DoubleSide,
-    })));
-    next.add(new THREE.LineSegments(
-      new THREE.EdgesGeometry(geometry, 25),
-      new THREE.LineBasicMaterial({ color: 0x526c7d, transparent: true, opacity: 0.85 }),
-    ));
+    next.add(
+      new THREE.Mesh(
+        geometry,
+        new THREE.MeshStandardMaterial({
+          color: 0xc1d0db,
+          roughness: 0.38,
+          metalness: 0.35,
+          side: THREE.DoubleSide,
+        }),
+      ),
+    );
+    next.add(
+      new THREE.LineSegments(
+        new THREE.EdgesGeometry(geometry, 25),
+        new THREE.LineBasicMaterial({ color: 0x526c7d, transparent: true, opacity: 0.85 }),
+      ),
+    );
     if (model) {
       scene.remove(model);
-      model.traverse(object => { object.geometry?.dispose(); object.material?.dispose(); });
+      model.traverse((object) => {
+        object.geometry?.dispose();
+        object.material?.dispose();
+      });
     }
     model = next;
     scene.add(model);
@@ -95,9 +116,13 @@ export function createViewport(container) {
     fit();
   }
 
-  container.addEventListener('keydown', event => {
+  container.addEventListener('keydown', (event) => {
     if (!dimensions) return;
-    if (event.key.toLowerCase() === 'f') { event.preventDefault(); fit(); return; }
+    if (event.key.toLowerCase() === 'f') {
+      event.preventDefault();
+      fit();
+      return;
+    }
     const offset = camera.position.clone().sub(controls.target);
     if (['+', '=', '-'].includes(event.key)) {
       event.preventDefault();
@@ -108,7 +133,7 @@ export function createViewport(container) {
     } else if (['ArrowUp', 'ArrowDown'].includes(event.key)) {
       event.preventDefault();
       const axis = new THREE.Vector3().crossVectors(offset, camera.up).normalize();
-      offset.applyAxisAngle(axis, event.key === 'ArrowUp' ? 0.10 : -0.10);
+      offset.applyAxisAngle(axis, event.key === 'ArrowUp' ? 0.1 : -0.1);
     } else return;
     camera.position.copy(controls.target).add(offset);
     controls.update();

@@ -45,5 +45,32 @@ or production-ready CAD certification is made.
 - Unsupported TEXT entities were rejected while preserving the existing drawing.
 - Windows CRLF DXF input initially lost header interpretation through StringIO. Universal
   newline normalization fixed it; a regression test now covers units and entity count.
-- A second read-only review was requested for commit `91b03fc`. Antigravity displayed
-  an agent execution error during that round; no completed second review is claimed yet.
+- A second read-only review of commit `91b03fc` returned specific code findings after
+  an agent execution error. The visible portion was read; the complete response has
+  not been confirmed because the native window could not be reactivated.
+
+## Second-round findings evaluated
+
+- **Accepted:** failed MOVE/COPY or two-point creation must not retain a rejected
+  target in the pending command. Failed point operations now restore their prior
+  pending points. A boundary-overflow MOVE can be corrected without restarting;
+  a CIRCLE can resume after its layer is unlocked. Regression tests cover both.
+- **Accepted:** CIRCLE now distinguishes Cartesian/polar point input from a scalar
+  radius. Scalar values use the same decimal grammar as coordinates, rejecting hex.
+  Diameter previews and final point-based circles share one radius calculation.
+- **Accepted in part:** a command must always be escapable after a layer is locked.
+  The explicit end path clears transient state even when completion is rejected.
+  Closing LINE/PLINE with fewer than three points now reports an error.
+- **Not adopted:** Escape should discard all completed LINE/PLINE segments. Keeping
+  valid segments when ending LINE matches Autodesk's documented behavior; undo
+  removes the completed command. See [Autodesk: To Draw Lines](https://help.autodesk.com/cloudhelp/2022/ENU/AutoCAD-Core/files/GUID-57CDDB6C-B12B-46CE-B9C5-22EFC17258FF.htm)
+  and [Autodesk: Geometry](https://help.autodesk.com/cloudhelp/ENU/AutoCAD-Web-Help/files/Hitchhikers-guide-0home/AutoCAD_Web_Help_Hitchhikers_guide_2geometry.html).
+- The visible response also began raising closed-polyline degeneracy. This remains
+  an open validation/interoperability question, not a verified or resolved finding.
+  A wire polyline must not automatically be treated as a polygon surface with an
+  area requirement. The full remaining response has not been read.
+
+Local checks after these changes: **55 Python tests, 26 JavaScript tests**, Ruff,
+Prettier and the Vite build pass. Browser checks confirmed a polar circle of radius
+15 mm, a diameter-20 circle of radius 10 mm, retention of completed polyline segments
+on Escape, and exit from an in-progress LINE after its layer is locked.

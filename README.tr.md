@@ -33,7 +33,7 @@ Tarayıcıda **http://127.0.0.1:4310** adresini açın. Ana sayfa 2B çizim alan
 plaka ölçülerini uygular. Proje dosyası düzenlenebilir veriyi saklar;
 STEP dosyası işlem geçmişinin yerine geçmez.
 
-Görünümde ok tuşları döndürür, `+`/`-` yakınlaştırır, `F` modeli sığdırır.
+3B denemesinde ok tuşları döndürür, `+`/`-` yakınlaştırır, `F` modeli sığdırır.
 Hesap veya bulut geometri servisi gerekmez. Bağımlılıklar kurulduktan sonra model
 işlemleri yerelde çalışır. Sunucu yalnız bu bilgisayardan erişilecek şekilde açılır.
 
