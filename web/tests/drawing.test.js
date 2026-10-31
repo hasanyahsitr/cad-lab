@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {DrawingStore,emptyDrawing,parsePoint,snapPoint,validateDrawing} from '../src/drawing/model.js';
+import {DrawingStore,drawingBounds,emptyDrawing,parsePoint,snapPoint,validateDrawing} from '../src/drawing/model.js';
 
 test('exact and relative coordinates reject incomplete, non-finite and out-of-range inputs',()=>{
   assert.deepEqual(parsePoint('10,-5'),[10,-5]);
@@ -47,4 +47,14 @@ test('Gemini review: polar coordinates and decimal grammar are locale independen
 test('Gemini review: closing edge midpoint remains a snap target, including on locked layers',()=>{
   const store=new DrawingStore();store.add({type:'polyline',points:[[0,0],[80,0],[80,50],[0,50]],closed:true});
   store.updateLayer('0',{locked:true});assert.deepEqual(snapPoint([0.1,25.1],store.document,1),[0,25]);
+});
+test('zoom bounds handle many vertices without argument-spread stack overflow',()=>{
+  const drawing=emptyDrawing();
+  drawing.entities=Array.from({length:120},(_,id)=>({id:String(id),layer:'0',type:'polyline',points:Array.from({length:1000},(_,x)=>[x,id]),closed:false}));
+  assert.deepEqual(drawingBounds(drawing),{minX:0,minY:0,maxX:999,maxY:119});
+});
+test('a restored drawing chooses its first valid layer even when its id is not 0',()=>{
+  const drawing=emptyDrawing();drawing.layers[0].id='custom-layer';
+  const store=new DrawingStore(drawing);store.add({type:'circle',center:[0,0],radius:5});
+  assert.equal(store.document.entities[0].layer,'custom-layer');
 });

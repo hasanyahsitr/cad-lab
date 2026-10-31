@@ -52,6 +52,8 @@ def test_dxf_contains_exact_entities_units_and_layer_properties():
         lambda d: d["layers"][0].update(name="bad/name"),
         lambda d: d["entities"][0].update(points=[[0, 0], [float("inf"), 0]]),
         lambda d: d["entities"][0].update(type="unsupported"),
+        lambda d: d["entities"][0].update(type=[]),
+        lambda d: d["entities"][0].update(layer=[]),
     ],
 )
 def test_invalid_drawing_export_is_rejected(mutation):

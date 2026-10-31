@@ -92,13 +92,16 @@ export function snapPoint(point, drawing, tolerance) {
 
 export function drawingBounds(drawing) {
   const visible = new Set(drawing.layers.filter(l=>l.visible).map(l=>l.id));
-  const points = drawing.entities.filter(e=>visible.has(e.layer)).flatMap(entityPoints);
-  if (!points.length) return {minX:-20,minY:-20,maxX:180,maxY:120};
-  return {minX:Math.min(...points.map(p=>p[0])),minY:Math.min(...points.map(p=>p[1])),maxX:Math.max(...points.map(p=>p[0])),maxY:Math.max(...points.map(p=>p[1]))};
+  const box={minX:Infinity,minY:Infinity,maxX:-Infinity,maxY:-Infinity};
+  for(const entity of drawing.entities){
+    if(!visible.has(entity.layer))continue;
+    for(const [x,y]of entityPoints(entity)){box.minX=Math.min(box.minX,x);box.minY=Math.min(box.minY,y);box.maxX=Math.max(box.maxX,x);box.maxY=Math.max(box.maxY,y);}
+  }
+  return box.minX===Infinity?{minX:-20,minY:-20,maxX:180,maxY:120}:box;
 }
 
 export class DrawingStore {
-  constructor(document = emptyDrawing()) { this.document=validateDrawing(document); this.history=[clone(this.document)]; this.index=0; this.selection=new Set(); this.layer='0'; }
+  constructor(document = emptyDrawing()) { this.document=validateDrawing(document); this.history=[clone(this.document)]; this.index=0; this.selection=new Set(); this.layer=this.document.layers[0].id; }
   commit(next) {
     const validated=validateDrawing(next);
     this.document=validated;

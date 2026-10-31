@@ -194,16 +194,20 @@ def drawing_to_dxf(content):
         if not isinstance(entity, dict):
             raise ProjectError("Invalid drawing entity.")
         identifier = entity.get("id")
+        layer_id = entity.get("layer")
         if (
             not isinstance(identifier, str)
             or not identifier
             or identifier in ids
-            or entity.get("layer") not in names
+            or not isinstance(layer_id, str)
+            or layer_id not in names
         ):
             raise ProjectError("Entity identifiers and layers must be valid.")
         ids.add(identifier)
         attributes = {"layer": names[entity["layer"]]}
         kind = entity.get("type")
+        if not isinstance(kind, str):
+            raise ProjectError("Invalid entity type.")
         if kind == "circle":
             radius = entity.get("radius")
             if not _point(entity.get("center")) or not _number(radius) or radius <= 1e-6:
