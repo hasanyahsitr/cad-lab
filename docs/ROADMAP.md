@@ -20,11 +20,15 @@ Progress is recorded as implemented work is verified. This is not a release-date
 
 ## Milestone 2 — local interactive experiment
 
-- [ ] Real 3D visualization generated from the CAD model.
-- [ ] Editable dimensions and clear errors while preserving the last valid model.
-- [ ] Project download/reopen and model exports.
-- [ ] Usable keyboard controls, labels, and narrow-screen layout.
-- [ ] Local operation without accounts, analytics, or cloud geometry processing.
+- [x] Real 3D visualization generated from the CAD model.
+- [x] Editable dimensions and clear errors while preserving the last valid model.
+- [x] Project download/reopen and model exports.
+- [x] Keyboard controls, labels, and a narrow-screen layout (390 px checked).
+- [x] Local operation without accounts, analytics, or cloud geometry processing.
+
+Initial UI checks: 80 → 100 mm rebuild, invalid-width rejection with the previous
+model retained, undo/redo, STEP download, project save/reopen, and no horizontal
+overflow at a 390 px browser viewport. Two automated history tests also pass.
 
 ## Later — full CAD application
 
