@@ -10,6 +10,24 @@ This repository starts with a deliberately small engineering milestone: a
 dimension-driven plate with four through-holes, project save/reopen, and STEP export.
 It is not yet a general-purpose sketcher or an AutoCAD/Fusion replacement.
 
+## Run the geometry milestone
+
+Python 3.12 is required. On Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.lock
+.\.venv\Scripts\python.exe -m pip install --no-deps -e .
+.\.venv\Scripts\python.exe -m cad_lab.cli --project examples/plate.cadlab.json
+.\.venv\Scripts\python.exe -m cad_lab.cli --project examples/plate.cadlab.json --width 100 --out artifacts/wide
+.\.venv\Scripts\python.exe -m pytest -q
+```
+
+Linux/macOS use `.venv/bin/python` instead. The CLI writes a versioned editable
+project, a STEP solid, and an STL mesh. It reimports STEP and verifies volume,
+dimensions, and validity. Generated outputs and virtual environments are gitignored.
+The lock file records the dependencies used in the first tested environment.
+
 ## Development in public
 
 Small commits record working milestones. The roadmap distinguishes implemented

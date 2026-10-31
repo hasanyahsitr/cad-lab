@@ -10,12 +10,13 @@ Progress is recorded as implemented work is verified. This is not a release-date
 
 ## Milestone 1 — exact geometry and round-trip files
 
-- [ ] Validated plate parameters in millimeters.
-- [ ] Four through-holes with edge-relative positions after dimensional changes.
-- [ ] Exact solid geometry and analytical volume checks.
-- [ ] Versioned project save/load, without executing project-provided code.
-- [ ] STEP and STL export; STEP reimport checks.
-- [ ] Automated tests and CI.
+- [x] Validated plate parameters in millimeters.
+- [x] Four through-holes with edge-relative positions after dimensional changes.
+- [x] Exact solid geometry and analytical volume checks.
+- [x] Versioned project save/load, without executing project-provided code.
+- [x] STEP and STL export; STEP reimport checks.
+- [x] Automated geometry, project, and local HTTP tests (37 passing locally).
+- [ ] CI execution on GitHub.
 
 ## Milestone 2 — local interactive experiment
 

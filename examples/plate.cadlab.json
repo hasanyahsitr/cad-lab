@@ -1,0 +1,16 @@
+{
+  "format": "cad-lab.project",
+  "schema_version": 1,
+  "units": "mm",
+  "name": "Mounting plate",
+  "model": {
+    "type": "four-hole-plate",
+    "parameters": {
+      "width": 80.0,
+      "depth": 50.0,
+      "thickness": 6.0,
+      "hole_diameter": 5.0,
+      "margin": 10.0
+    }
+  }
+}
